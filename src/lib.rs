@@ -2,6 +2,7 @@ use html_escape::decode_html_entities;
 use reqwest::blocking::get;
 use std::ffi::{c_char, CStr, CString};
 use strum::EnumIter;
+use urlencoding::encode;
 
 /// An enumeration representing different languages supported for translation.
 /// Each variant corresponds to a language that can be translated from and to.
@@ -381,8 +382,8 @@ pub extern "C" fn c_translate(text: *const c_char, from: Language, to: Language)
             let c_result = CString::new(result).unwrap();
             c_result.into_raw()
         }
-        Err(_) => {
-            let err_msg = CString::new("Translation failed").unwrap();
+        Err(e) => {
+            let err_msg = CString::new(format!("Translation failed: {}", e)).unwrap();
             err_msg.into_raw()
         }
     }
@@ -447,7 +448,7 @@ fn fetch(text: &str, from: Language, to: Language) -> Result<String, String> {
         "https://translate.google.com/m?tl={}&sl={}&q={}",
         to.to_str().0,
         from.to_str().0,
-        text
+        encode(text)
     );
     match get(url) {
         Err(resp) => Err(resp.to_string()),
@@ -477,13 +478,6 @@ fn fetch(text: &str, from: Language, to: Language) -> Result<String, String> {
 /// - If the element is not found, it returns an error message "Error decoding".
 /// - Otherwise, it decodes any HTML entities from the inner text and returns it.
 ///
-/// # Example
-///
-/// ```
-/// let html = r#"<div class="result-container">Hello &amp; welcome</div>"#.to_string();
-/// let result = parse(Ok(html));
-/// assert_eq!(result.unwrap(), "Hello & welcome");
-/// ```
 fn parse(res: Result<String, String>) -> Result<String, String> {
     match res {
         Err(err) => Err(err),
