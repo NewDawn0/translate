@@ -33,7 +33,6 @@
               vendored-sources.directory = cargoDeps;
             };
           };
-        in {
           default = pkgs.stdenv.mkDerivation {
             inherit name version src;
             buildInputs = with pkgs;
@@ -65,6 +64,9 @@
               platforms = pkgs.lib.platforms.all;
             };
           };
-        });
+          c-example = pkgs.callPackage ./examples {
+            pkgs = pkgs // { translate = default; };
+          };
+        in { inherit default c-example; });
     };
 }
