@@ -8,7 +8,7 @@ keywords = ["translation", "translate", "translator", "cli translator"]
 categories = ["command-line-utilities"]
 
 [lib]
-crate-type = ["cdylib"]
+crate-type = ["cdylib", "staticlib", "rlib"]
 
 [dependencies]
 clap = { version = "4.5.35", features = ["derive"] }
@@ -16,6 +16,7 @@ html-escape = "0.2.13"
 reqwest = { version = "0.11.4", features = ["blocking"] }
 strum = { version = "0.27.1", features = ["derive"] }
 tl = "0.2.1"
+urlencoding = "2.1.3"
 
 [build-dependencies]
 cbindgen = "0.28.0"
