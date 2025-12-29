@@ -36,7 +36,7 @@
           default = pkgs.stdenv.mkDerivation {
             inherit name version src;
             buildInputs = with pkgs;
-              [ cargo ] ++ lib.optionals pkgs.stdenv.isDarwin [ libiconv ];
+              [ pkg-config openssl cargo ] ++ lib.optionals pkgs.stdenv.isDarwin [ libiconv ];
             configurePhase = ''
               mkdir -p .cargo
               install ${cargoConfig} .cargo/config.toml
